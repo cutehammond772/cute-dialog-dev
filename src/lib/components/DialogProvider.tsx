@@ -1,37 +1,12 @@
+import { useDialogContainer } from "@lib/hooks";
+import DialogContext from "@lib/contexts/DialogContext";
 import * as React from "react";
-import { useState, useCallback } from "react";
-import { IDialogContainer, IDialogContext } from "../types/provider";
-
-export const DialogContext = React.createContext<IDialogContext>(null as any);
 
 const DialogProvider = ({ children }: React.PropsWithChildren) => {
-  const [container, setContainer] = useState<IDialogContainer>({});
-
-  const addDialog = useCallback((dialog: React.ReactNode) => {
-    const uuid = crypto.randomUUID();
-    setContainer((container) => ({ ...container, [uuid]: dialog }));
-  }, []);
-
-  const removeDialog = useCallback(
-    (id: string) => {
-      if (!container[id]) {
-        throw new Error();
-      }
-
-      setContainer((container) =>
-        Object.keys(container)
-          .filter((cid) => cid !== id)
-          .reduce((accu, id) => {
-            accu[id] = container[id];
-            return accu;
-          }, {} as IDialogContainer)
-      );
-    },
-    [container]
-  );
+  const { container, add, remove } = useDialogContainer();
 
   return (
-    <DialogContext.Provider value={{ addDialog, removeDialog }}>
+    <DialogContext.Provider value={{ addDialog: add, removeDialog: remove }}>
       {children}
       <div style={{ position: "absolute", width: "100%", height: "100%" }}>
         {Object.keys(container).map((id) => (
