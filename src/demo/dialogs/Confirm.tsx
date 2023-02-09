@@ -1,28 +1,25 @@
-import { useDialogView } from "@lib/hooks";
-import { Dialog, DialogTemplate } from "@lib/types/essential";
 import { useEffect } from "react";
+import { Dialog, DialogTemplate } from "@lib/types/essential";
+import { useDialog } from "@lib/hooks";
 
 import "@demo/dialogs/Confirm.style.css";
 
 const Element: Dialog = ({ id }) => {
-  const view = useDialogView(id);
+  const view = useDialog(id);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setTimeout(() => {
       const handle = view.getHandle();
       if (!handle) return;
 
-      handle.style.top = `${Math.random() * 1000}px`;
-      handle.style.left = `${Math.random() * 1000}px`;
-    }, 1000);
-
-    return () => clearInterval(interval);
+      handle.style.opacity = "1";
+    }, 0);
   }, [view]);
 
   return (
     <>
-      <h3>This is a test confirm dialog.</h3>
-      <h4>Are you understand?</h4>
+      <h3>Press remove to close this Dialog.</h3>
+      <button onClick={() => view.remove()}>REMOVE</button>
     </>
   );
 };

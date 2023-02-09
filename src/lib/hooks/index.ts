@@ -1,9 +1,9 @@
 export { default as useDialogCreator } from "@lib/hooks/external/useDialogCreator";
 
-export { default as useDialogView } from "@lib/hooks/external/useDialogView";
+export { default as useDialog } from "@lib/hooks/external/useDialog";
 
 export { default as useDialogContainer } from "@lib/hooks/internal/useDialogContainer";
 
-export { default as useDialogHandle } from "@lib/hooks/internal/useDialogHandle";
+export { default as useDialogHandles } from "@lib/hooks/internal/useDialogHandles";
 
-export { default as useDialogProfile } from "@lib/hooks/internal/useDialogProfile";
+export { default as useDialogProfiles } from "@lib/hooks/internal/useDialogProfiles";

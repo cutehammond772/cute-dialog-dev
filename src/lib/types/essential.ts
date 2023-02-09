@@ -8,6 +8,6 @@ export type DialogProfile = {
   className?: string;
 };
 
-export type Dialog = ({ id }: { id: DialogID }) => JSX.Element;
+export type Dialog = (props: { id: DialogID }) => JSX.Element;
 
 export type DialogTemplate = [DialogProfile, Dialog];
