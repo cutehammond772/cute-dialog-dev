@@ -1,40 +1,32 @@
-import { CSSProperties, useEffect, useRef } from "react";
+import { useDialogView } from "@lib/hooks";
+import { Dialog, DialogTemplate } from "@lib/types/essential";
+import { useEffect } from "react";
 
-const DialogStyle: CSSProperties = {
-  position: "absolute",
-  top: "0px",
-  left: "0px",
+import "@demo/dialogs/Confirm.style.css";
 
-  width: "200px",
-  height: "400px",
-  backgroundColor: "grey",
-  borderRadius: "20px",
-
-  padding: "20px",
-
-  transition: "all 0.5s",
-};
-
-const Confirm = () => {
-  const ref = useRef<HTMLDivElement>(null);
+const Element: Dialog = ({ id }) => {
+  const view = useDialogView(id);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      if (ref.current) {
-        ref.current.style.top = `${Math.random() * 1200}px`;
-        ref.current.style.left = `${Math.random() * 1200}px`;
-      }
+    const interval = setInterval(() => {
+      const handle = view.getHandle();
+      if (!handle) return;
+
+      handle.style.top = `${Math.random() * 1000}px`;
+      handle.style.left = `${Math.random() * 1000}px`;
     }, 1000);
 
-    return () => clearInterval(id);
-  }, []);
+    return () => clearInterval(interval);
+  }, [view]);
 
   return (
-    <div style={DialogStyle} ref={ref}>
+    <>
       <h3>This is a test confirm dialog.</h3>
       <h4>Are you understand?</h4>
-    </div>
+    </>
   );
 };
+
+const Confirm: DialogTemplate = [{ className: "confirm" }, Element];
 
 export default Confirm;

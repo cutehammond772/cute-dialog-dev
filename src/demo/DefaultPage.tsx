@@ -1,12 +1,12 @@
-import { useDialog } from "@lib/hooks";
-import Confirm from "./dialogs/Confirm";
+import { useDialogCreator } from "@lib/hooks";
+import Confirm from "@demo/dialogs/Confirm";
 
 const DefaultPage = () => {
-  const { addDialog } = useDialog();
+  const { addDialog } = useDialogCreator();
 
   return (
-    <div>
-      <button onClick={() => addDialog(<Confirm />)}>Add Confirm Dialog</button>
+    <div style={{ position: "absolute" }}>
+      <button onClick={() => addDialog(Confirm)}>Add Confirm Dialog</button>
     </div>
   );
 };

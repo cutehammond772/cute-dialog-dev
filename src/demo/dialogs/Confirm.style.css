@@ -1,0 +1,18 @@
+.confirm {
+  pointer-events: initial;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+
+  width: 400px;
+  height: 200px;
+  background-color: white;
+  border-radius: 20px;
+
+  box-shadow: 0px 0px 10px gray;
+
+  padding: 20px;
+
+  transition: all 0.5s;
+}
