@@ -1,7 +1,7 @@
-import { DialogAreaProfile } from "@lib/types/area";
 import * as React from "react";
+import { DialogAreaProfile } from "@lib/types/area";
 
-const defaultAreaProfile: React.CSSProperties = {
+const defaultStyle: React.CSSProperties = {
   position: "absolute",
   width: "100%",
   height: "100%",
@@ -9,8 +9,8 @@ const defaultAreaProfile: React.CSSProperties = {
   pointerEvents: "none",
 };
 
-const DialogArea = ({ children, areaProfile }: React.PropsWithChildren<DialogAreaProfile>) => {
-  return <div style={areaProfile ?? defaultAreaProfile}>{children}</div>;
+const DialogArea = ({ children, style }: React.PropsWithChildren<DialogAreaProfile>) => {
+  return <div style={style ?? defaultStyle}>{children}</div>;
 };
 
 export default DialogArea;

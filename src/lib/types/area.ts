@@ -1,5 +1,5 @@
 import React from "react";
 
 export interface DialogAreaProfile {
-  areaProfile?: React.CSSProperties;
+  style?: React.CSSProperties;
 }

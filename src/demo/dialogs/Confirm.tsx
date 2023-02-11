@@ -1,29 +1,29 @@
 import { useEffect } from "react";
-import { Dialog, DialogTemplate } from "@lib/types/essential";
+import { DialogElement, DialogTemplate } from "@lib/types/essential";
 import { useDialog } from "@lib/hooks";
 
 import "@demo/dialogs/Confirm.style.css";
 
-const Element: Dialog = ({ id }) => {
-  const view = useDialog(id);
+const Element: DialogElement = () => {
+  const { getHandle, remove } = useDialog();
 
   useEffect(() => {
     setTimeout(() => {
-      const handle = view.getHandle();
+      const handle = getHandle();
       if (!handle) return;
 
       handle.style.opacity = "1";
     }, 0);
-  }, [view]);
+  }, [getHandle]);
 
   return (
     <>
       <h3>Press remove to close this Dialog.</h3>
-      <button onClick={() => view.remove()}>REMOVE</button>
+      <button onClick={remove}>REMOVE</button>
     </>
   );
 };
 
-const Confirm: DialogTemplate = [{ className: "confirm" }, Element];
+const Confirm: DialogTemplate = [{ defaultStyle: { className: "confirm" } }, Element];
 
 export default Confirm;

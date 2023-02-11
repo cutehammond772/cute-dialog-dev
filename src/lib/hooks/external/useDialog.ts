@@ -1,21 +1,20 @@
-import { useCallback, useContext } from "react";
-import DialogContext from "@lib/contexts/DialogContext";
 import { IDialogContext } from "@lib/types/context";
-import { DialogID } from "@lib/types/essential";
-import { useDialogCreator } from "@lib/hooks";
+import DialogContext from "@lib/contexts/DialogContext";
+import { useContext } from "react";
 
-// 일반적으로 Dialog Element 내에서 사용할 수 있는 Hook입니다.
-const useDialog = (id: DialogID) => {
-  const { _getHandle } = useContext<IDialogContext>(DialogContext);
-  const { removeDialog } = useDialogCreator();
+/**
+ * DialogResolver 내부에서 사용하는 Hook입니다.
+ * 이 이외의 영역에서는 사용할 수 없습니다.
+ */
+const useDialog = () => {
+  const context = useContext<IDialogContext>(DialogContext);
 
-  const getHandle = useCallback(() => {
-    return _getHandle(id);
-  }, [_getHandle, id]);
+  if (!context) {
+    // DialogResolver 외부에서 사용된 경우 오류가 발생합니다.
+    throw new Error();
+  }
 
-  const remove = useCallback(() => removeDialog(id), [id, removeDialog]);
-
-  return { getHandle, remove };
+  return { getHandle: context.getHandle, remove: context.remove, reference: context.reference };
 };
 
 export default useDialog;

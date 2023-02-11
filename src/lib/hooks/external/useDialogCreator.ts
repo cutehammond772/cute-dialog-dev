@@ -1,12 +1,11 @@
 import { useContext } from "react";
-import DialogContext from "@lib/contexts/DialogContext";
-import { IDialogContext } from "@lib/types/context";
+import { IDialogProviderContext } from "@lib/types/context";
+import DialogProviderContext from "@lib/contexts/DialogProviderContext";
 
-// Dialog를 생성할 수 있는 Hook입니다.
 const useDialogCreator = () => {
-  const { _addDialog, _removeDialog } = useContext<IDialogContext>(DialogContext);
+  const { addDialog, removeDialog } = useContext<IDialogProviderContext>(DialogProviderContext);
 
-  return { addDialog: _addDialog, removeDialog: _removeDialog };
+  return { addDialog, removeDialog };
 };
 
 export default useDialogCreator;

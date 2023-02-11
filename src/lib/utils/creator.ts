@@ -1,6 +1,6 @@
-import { DialogID } from "@lib/types/essential";
+import { DialogUID } from "@lib/types/essential";
 
-export const createDialogID = (): DialogID => {
+export const createDialogUID = (): DialogUID => {
   const uuid = crypto.randomUUID();
   return uuid;
 };
