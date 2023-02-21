@@ -1,13 +1,33 @@
-import { DialogReferenceKey, DialogTemplate } from "@lib/types/essential";
+import {
+  DialogProfile,
+  DialogReferenceFunction,
+  DialogReferenceKey,
+  DialogTemplate,
+} from "@lib/types/essential";
 
-export interface IDialogProviderContext {
+interface DialogContainerFeatures {
   addDialog: (dialog: DialogTemplate) => DialogReferenceKey;
-  removeDialog: (reference: DialogReferenceKey) => void;
-  getHandle: (reference: DialogReferenceKey) => HTMLDivElement | undefined;
+  removeDialog: DialogReferenceFunction<void>;
 }
 
+interface DialogHandleFeatures {
+  getHandle: DialogReferenceFunction<HTMLDivElement | undefined>;
+}
+
+interface DialogProfileFeatures {
+  getProfile: DialogReferenceFunction<DialogProfile>;
+}
+
+export type IDialogProviderContext = DialogContainerFeatures &
+  DialogHandleFeatures &
+  DialogProfileFeatures;
+
 export interface IDialogContext {
-  reference: DialogReferenceKey;
-  getHandle: () => HTMLDivElement | undefined;
-  remove: () => void;
+  // Dialog 삭제
+  removeDialog: () => void;
+
+  // 동적 Style 관리
+  addStyles: (...classNames: string[]) => void;
+  removeStyles: (...classNames: string[]) => void;
+  resetStyles: () => void;
 }

@@ -1,6 +1,7 @@
-import { IDialogContext } from "@lib/types/context";
-import DialogContext from "@lib/contexts/DialogContext";
 import { useContext } from "react";
+import { IDialogContext } from "@lib/types/context";
+
+import DialogContext from "@lib/contexts/DialogContext";
 
 /**
  * DialogResolver 내부에서 사용하는 Hook입니다.
@@ -14,7 +15,7 @@ const useDialog = () => {
     throw new Error();
   }
 
-  return { getHandle: context.getHandle, remove: context.remove, reference: context.reference };
+  return { ...context };
 };
 
 export default useDialog;

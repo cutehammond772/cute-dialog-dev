@@ -19,3 +19,5 @@ export type DialogProfile = {
 export type DialogElement = () => JSX.Element;
 
 export type DialogTemplate = [DialogProfile, DialogElement];
+
+export type DialogReferenceFunction<T> = (reference: DialogReferenceKey) => T;

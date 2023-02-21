@@ -1,25 +1,17 @@
-import { useEffect } from "react";
 import { DialogElement, DialogTemplate } from "@lib/types/essential";
 import { useDialog } from "@lib/hooks";
 
 import "@demo/dialogs/Confirm.style.css";
 
 const Element: DialogElement = () => {
-  const { getHandle, remove } = useDialog();
-
-  useEffect(() => {
-    setTimeout(() => {
-      const handle = getHandle();
-      if (!handle) return;
-
-      handle.style.opacity = "1";
-    }, 0);
-  }, [getHandle]);
-
+  const { removeDialog, addStyles, resetStyles } = useDialog();
+  
   return (
     <>
       <h3>Press remove to close this Dialog.</h3>
-      <button onClick={remove}>REMOVE</button>
+      <button onClick={() => addStyles("confirm-wide")}>Wider</button>
+      <button onClick={resetStyles}>Reset Style</button>
+      <button onClick={removeDialog}>Remove</button>
     </>
   );
 };
