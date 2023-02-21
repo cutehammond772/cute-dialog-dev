@@ -47,8 +47,7 @@ const StylePatch: Patch<StylePatchStore, StylePatchRequest> = {
       return { ...store, addedClassNames: [] };
     }
 
-    // 이 이외의 타입이 전달된 경우
-    throw new Error();
+    throw new Error("StylePatch의 타입은 ADD, REMOVE, RESET 중 하나여야 합니다.");
   },
   onClean({ handle, store }) {
     handle.className = store.initialClassName;

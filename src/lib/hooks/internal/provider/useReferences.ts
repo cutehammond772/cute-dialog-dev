@@ -19,7 +19,7 @@ const useReferences = () => {
 
   const removeRef = useCallback((reference: DialogReferenceKey) => {
     if (!references.find(ref => ref === reference)) {
-      throw new Error();
+      throw new Error("존재하지 않는 Reference에 대해 삭제를 시도했습니다.");
     }
 
     setReferences(references => references.filter(ref => ref !== reference));

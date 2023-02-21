@@ -5,7 +5,6 @@ export type DialogUID = string;
 export type DialogReferenceKey = { uid: DialogUID };
 
 export type DialogStyleProfile = {
-  css?: React.CSSProperties;
   className?: string;
 };
 

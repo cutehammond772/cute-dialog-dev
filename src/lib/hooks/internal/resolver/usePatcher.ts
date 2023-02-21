@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
 import {
@@ -44,7 +44,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
     const handle = provider.getHandle(reference);
 
     if (!handle) {
-      throw new Error();
+      throw new Error("마운트 또는 리렌더 후 Dialog의 Handle을 가져오지 못했습니다.");
     }
 
     // Patch가 초기화되지 않은 경우 먼저 onInit()를 수행하여 초기화합니다.
@@ -62,16 +62,14 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
           const currentStore = stores.current[uid];
 
           if (!currentStore) {
-            // Patch가 초기화되지 않은 경우
-            throw new Error();
+            throw new Error("초기화되지 않은 Patch에 대해 onResolve() 호출을 시도했습니다.");
           }
 
           const store = patch.onResolve({ handle, request, store: currentStore });
 
           if (store instanceof Object) {
             if (currentStore === store) {
-              // store 반환 시 불변성을 유지해야 합니다.
-              throw new Error();
+              throw new Error("onResolve()에서 store 반환 시 immutable한 객체여야 합니다.");
             }
 
             // 새로운 store 객체를 저장합니다.
@@ -89,14 +87,14 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
       const handle = provider.getHandle(reference);
 
       if (!handle) {
-        throw new Error();
+        throw new Error("언마운트 또는 리렌더 전 Dialog의 Handle을 가져오지 못했습니다.");
       }
 
       nodes.forEach(({ uid, patch }) => {
         const currentStore = stores.current[uid];
 
         if (!currentStore) {
-          throw new Error();
+          throw new Error("초기화되지 않은 Patch에 대해 onClean() 호출을 시도했습니다.");
         }
 
         patch.onClean({ handle, store: currentStore });

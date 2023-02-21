@@ -76,7 +76,6 @@ const DialogProvider = ({ children }: React.PropsWithChildren) => {
             return (
               <DialogComponent
                 key={reference.uid}
-                style={profile?.defaultStyle?.css}
                 className={profile.defaultStyle?.className}
                 ref={(ref) => handleRef(reference, ref)}
               >

@@ -11,8 +11,7 @@ const useDialog = () => {
   const context = useContext<IDialogContext>(DialogContext);
 
   if (!context) {
-    // DialogResolver 외부에서 사용된 경우 오류가 발생합니다.
-    throw new Error();
+    throw new Error("useDialog() Hook은 DialogResolver Component의 외부에서 사용할 수 없습니다.");
   }
 
   return { ...context };
