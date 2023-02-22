@@ -6,12 +6,12 @@ export type ResolveProps<S extends object, R extends object> = {
   store: S;
   request: R;
 };
-export type CleanProps<S extends object> = { handle: HTMLDivElement; store: S };
+export type CleanUpProps<S extends object> = { handle: HTMLDivElement; store: S };
 
 export interface Patch<S extends object, R extends object> {
   onInit: (props: InitProps) => S;
   onResolve: (props: ResolveProps<S, R>) => S | void;
-  onClean: (props: CleanProps<S>) => void;
+  onCleanUp: (props: CleanUpProps<S>) => void;
 }
 
 export interface PatchNode<S extends object, R extends object> {

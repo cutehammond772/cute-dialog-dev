@@ -49,7 +49,7 @@ const StylePatch: Patch<StylePatchStore, StylePatchRequest> = {
 
     throw new Error("StylePatch의 타입은 ADD, REMOVE, RESET 중 하나여야 합니다.");
   },
-  onClean({ handle, store }) {
+  onCleanUp({ handle, store }) {
     handle.className = store.initialClassName;
   },
 };

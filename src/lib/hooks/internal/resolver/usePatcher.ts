@@ -94,10 +94,10 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
         const currentStore = stores.current[uid];
 
         if (!currentStore) {
-          throw new Error("초기화되지 않은 Patch에 대해 onClean() 호출을 시도했습니다.");
+          throw new Error("초기화되지 않은 Patch에 대해 onCleanUp() 호출을 시도했습니다.");
         }
 
-        patch.onClean({ handle, store: currentStore });
+        patch.onCleanUp({ handle, store: currentStore });
       });
     },
     [provider, reference, nodes, count]
