@@ -18,4 +18,4 @@ export { default as useProfiles } from "@lib/hooks/internal/provider/useProfiles
 // DialogResolver에서 사용되는 Hooks
 export { default as useDynamicStyles } from "@lib/hooks/internal/resolver/style/useDynamicStyles";
 
-export { default as usePatcher } from "@lib/hooks/internal/resolver/usePatcher";
+export { default as usePatcher } from "@lib/hooks/internal/patcher/usePatcher";

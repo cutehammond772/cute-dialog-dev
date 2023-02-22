@@ -13,41 +13,41 @@ export interface StylePatchRequest {
 
 export interface StylePatchStore {
   initialClassName: string;
-  addedClassNames: Array<string>;
+  resolvedClassNames: Array<string>;
 }
 
 const StylePatch: Patch<StylePatchStore, StylePatchRequest> = {
   onInit({ handle }) {
-    return { initialClassName: handle.className, addedClassNames: [] };
+    return { initialClassName: handle.className, resolvedClassNames: [] };
   },
-  onResolve({ handle, request, store }) {
+  onRequest({ store, request }) {
     const { classNames, type } = request;
-    const { initialClassName, addedClassNames } = store;
+    const { resolvedClassNames } = store;
 
-    if (type === StylePatchRequestType.ADD) {
-      const uniqueClassNames = addedClassNames.concat(
-        classNames.filter((className) => !addedClassNames.find((current) => current === className))
-      );
+    switch (type) {
+      case StylePatchRequestType.ADD:
+        const uniqueClassNames = resolvedClassNames.concat(
+          classNames.filter(
+            (className) => !resolvedClassNames.find((current) => current === className)
+          )
+        );
 
-      handle.className = `${initialClassName} ${uniqueClassNames.join(" ")}`;
-      return { ...store, addedClassNames: uniqueClassNames };
+        return { ...store, resolvedClassNames: uniqueClassNames };
+      case StylePatchRequestType.REMOVE:
+        const filteredClassNames = resolvedClassNames.filter(
+          (className) => !classNames.find((removal) => removal === className)
+        );
+
+        return { ...store, resolvedClassNames: filteredClassNames };
+      case StylePatchRequestType.RESET:
+        return { ...store, resolvedClassNames: [] };
+      default:
+        throw new Error("StylePatch의 타입은 ADD, REMOVE, RESET 중 하나여야 합니다.");
     }
-
-    if (type === StylePatchRequestType.REMOVE) {
-      const filteredClassNames = addedClassNames.filter(
-        (className) => !classNames.find((removal) => removal === className)
-      );
-
-      handle.className = `${initialClassName} ${filteredClassNames.join(" ")}`;
-      return { ...store, addedClassNames: filteredClassNames };
-    }
-
-    if (type === StylePatchRequestType.RESET) {
-      handle.className = initialClassName;
-      return { ...store, addedClassNames: [] };
-    }
-
-    throw new Error("StylePatch의 타입은 ADD, REMOVE, RESET 중 하나여야 합니다.");
+  },
+  onResolve({ handle, store }) {
+    const { initialClassName, resolvedClassNames } = store;
+    handle.className = [initialClassName, ...resolvedClassNames].join(" ");
   },
   onCleanUp({ handle, store }) {
     handle.className = store.initialClassName;
