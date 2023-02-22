@@ -1,0 +1,56 @@
+.confirm {
+  pointer-events: initial;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 400px;
+  height: 400px;
+
+  overflow: hidden;
+  box-sizing: border-box;
+
+  background-color: white;
+  border-radius: 20px;
+
+  box-shadow: 0px 0px 20px gray;
+  padding: 20px;
+
+  opacity: 1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+
+  transition: all 0.5s;
+}
+
+.confirm .button-group {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 16px;
+}
+
+.confirm .button-group button {
+  padding: .5rem 1rem .5rem 1rem;
+  border: none;
+
+  background-color: skyblue;
+  font-weight: bold;
+  border-radius: .5rem;
+  cursor: pointer;
+
+  transition: all .5s;
+}
+
+.confirm .button-group button:hover {
+  filter: brightness(1.1);
+}
+
+.confirm-wide {
+  width: 600px;
+  height: 600px;
+}
