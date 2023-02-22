@@ -12,6 +12,7 @@ import DialogProviderContext from "@lib/contexts/DialogProviderContext";
  */
 const DialogProvider = ({ children }: React.PropsWithChildren) => {
   const { createRef, removeRef, references } = useReferences();
+  
   const elements = useElements();
   const profiles = useProfiles();
 

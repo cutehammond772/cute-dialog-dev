@@ -16,7 +16,8 @@ export interface StylePatchStore {
   resolvedClassNames: Array<string>;
 }
 
-const StylePatch: Patch<StylePatchStore, StylePatchRequest> = {
+export const Style: Patch<StylePatchStore, StylePatchRequest> = {
+  signature: "@cute/dialog/core/patch/style",
   onInit({ handle }) {
     return { initialClassName: handle.className, resolvedClassNames: [] };
   },
@@ -53,5 +54,3 @@ const StylePatch: Patch<StylePatchStore, StylePatchRequest> = {
     handle.className = store.initialClassName;
   },
 };
-
-export default StylePatch;

@@ -1,8 +1,7 @@
 import { PatcherRegisterFn, PatchNode, PatchRegistrationCallbackFn } from "@lib/types/patch";
-import { createPatchUID } from "@lib/utils/creator";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const usePatchRegistration = () => {
+const usePatchRegistrations = () => {
   const [nodes, setNodes] = useState<Array<PatchNode<any, any>>>([]);
 
   const reserved = useRef<Array<PatchNode<any, any>>>([]);
@@ -15,13 +14,27 @@ const usePatchRegistration = () => {
     []
   );
 
-  const register: PatcherRegisterFn = useCallback((patch) => {
-    const uid = createPatchUID();
+  const register: PatcherRegisterFn = useCallback(
+    (patch) => {
+      if (
+        nodes.map(({ signature }) => signature).find((signature) => signature === patch.signature)
+      ) {
+        throw new Error("등록된 Patch 중에 동일한 Patch가 존재합니다.");
+      }
 
-    reserved.current = reserved.current.concat({ uid, patch });
-    setReservedCount((count) => count + 1);
-    return uid;
-  }, []);
+      if (
+        reserved.current
+          .map(({ signature }) => signature)
+          .find((signature) => signature === patch.signature)
+      ) {
+        throw new Error("등록이 예약된 Patch 중에 동일한 Patch가 존재합니다.");
+      }
+
+      reserved.current = reserved.current.concat({ signature: patch.signature, patch });
+      setReservedCount((count) => count + 1);
+    },
+    [nodes]
+  );
 
   useEffect(() => {
     if (reserved.current.length === 0) return;
@@ -37,4 +50,4 @@ const usePatchRegistration = () => {
   return { register, nodes, setCallback };
 };
 
-export default usePatchRegistration;
+export default usePatchRegistrations;

@@ -4,6 +4,7 @@ import {
   DialogReferenceKey,
   DialogTemplate,
 } from "@lib/types/essential";
+import { PatchSignature } from "./patch";
 
 interface DialogContainerFeatures {
   addDialog: (dialog: DialogTemplate) => DialogReferenceKey;
@@ -23,11 +24,13 @@ export type IDialogProviderContext = DialogContainerFeatures &
   DialogProfileFeatures;
 
 export interface IDialogContext {
-  // Dialog 삭제
-  removeDialog: () => void;
+  // Dialog 자기 자신을 삭제합니다.
+  // Note: 직접 호출을 지양합니다. 이후 request()로 통합될 수 있습니다.
+  remove: () => void;
 
-  // 동적 Style 관리
-  addStyles: (...classNames: string[]) => void;
-  removeStyles: (...classNames: string[]) => void;
-  resetStyles: () => void;
+  // 등록된 Patch에 요청을 보냅니다. 등록되지 않은 Patch인 경우 요청은 무시됩니다.
+  request: <R extends object>(signature: PatchSignature, request: R) => void;
+
+  // Patch에서 발생된 Event를 받아 콜백 함수를 호출합니다.
+  receive: (event: string, callbackFn: () => void) => void;
 }

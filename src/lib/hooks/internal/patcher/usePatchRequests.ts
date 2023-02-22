@@ -1,7 +1,7 @@
 import { PatcherRequestFn, PatchRequest, PatchRequestCallbackFn } from "@lib/types/patch";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const usePatchRequest = () => {
+const usePatchRequests = () => {
   const requests = useRef<Array<PatchRequest<any>>>([]);
 
   // Patch 요청 시 카운트가 증가합니다. Re-render 요청을 위해 사용됩니다.
@@ -15,8 +15,8 @@ const usePatchRequest = () => {
   );
 
   // 요청을 수행할 때, 등록되지 않은 Patch로 요청 시 무시됩니다.
-  const request: PatcherRequestFn = useCallback((uid, request) => {
-    requests.current = requests.current.concat({ uid, request });
+  const request: PatcherRequestFn = useCallback((signature, request) => {
+    requests.current = requests.current.concat({ signature, request });
     setRequestCount((count) => count + 1);
   }, []);
 
@@ -32,4 +32,4 @@ const usePatchRequest = () => {
   return { request, setCallback };
 };
 
-export default usePatchRequest;
+export default usePatchRequests;

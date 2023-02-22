@@ -1,11 +1,13 @@
 import { useCallback, useContext } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
+import { PatchSignature } from "@lib/types/patch";
 import { usePatch, usePatcher } from "@lib/hooks";
 
 import DialogContext from "@lib/contexts/DialogContext";
 import DialogProviderContext from "@lib/contexts/DialogProviderContext";
-import StylePatch, { StylePatchRequestType } from "@lib/patches/StylePatch";
+import { Style } from "@lib/patches/style";
+import { Animation } from "@lib/patches/animation";
 
 /**
  * 특정 Dialog에서,
@@ -19,39 +21,36 @@ const DialogResolver = ({
 }: React.PropsWithChildren<{ reference: DialogReferenceKey }>) => {
   const provider = useContext<IDialogProviderContext>(DialogProviderContext);
 
-  // DialogProvider의 함수를 특정 Dialog에 맞게 가공합니다.
-  const removeDialog = useCallback(() => provider.removeDialog(reference), [provider, reference]);
-
-  // 이 Dialog의 Handle 관리를 담당합니다.
+  // Patch를 통해 Handle을 관리하거나, Dialog에 Event를 발생시킵니다.
   const patcher = usePatcher(reference);
 
-  // 특정 Dialog의 Style을 동적으로 관리합니다.
-  const styles = usePatch(patcher, StylePatch);
+  // Patch를 등록합니다.
+  // Note: 추후 usePatch는 사라질 예정입니다.
+  usePatch(patcher, Style);
+  usePatch(patcher, Animation);
 
-  const addStyles = useCallback(
-    (...classNames: Array<string>) => {
-      styles.request({ type: StylePatchRequestType.ADD, classNames });
+  // Dialog를 삭제합니다.
+  const remove = useCallback(() => provider.removeDialog(reference), [provider, reference]);
+
+  // Patch 요청을 보냅니다.
+  const request = useCallback(
+    <R extends object>(signature: PatchSignature, request: R) => {
+      patcher.request(signature, request);
     },
-    [styles]
+    [patcher]
   );
 
-  const removeStyles = useCallback(
-    (...classNames: Array<string>) => {
-      styles.request({ type: StylePatchRequestType.REMOVE, classNames });
+  // Patch에서 발생한 Event를 받아 콜백 함수를 실행합니다.
+  // Note: Dialog Element의 Top-Level에서 호출해야 합니다.
+  const receive = useCallback(
+    (event: string, callbackFn: () => void) => {
+      patcher.receive(event, callbackFn);
     },
-    [styles]
+    [patcher]
   );
-
-  const resetStyles = useCallback(() => {
-    styles.request({ type: StylePatchRequestType.RESET, classNames: [] });
-  }, [styles]);
 
   return (
-    <DialogContext.Provider
-      value={{ removeDialog, addStyles, removeStyles, resetStyles }}
-    >
-      {children}
-    </DialogContext.Provider>
+    <DialogContext.Provider value={{ remove, request, receive }}>{children}</DialogContext.Provider>
   );
 };
 

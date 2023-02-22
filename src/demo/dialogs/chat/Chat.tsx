@@ -1,10 +1,31 @@
+import { useCallback } from "react";
 import { DialogElement, DialogTemplate } from "@lib/types/essential";
+import { AnimationTimingEvent } from "@lib/patches/animation";
 import { useDialog } from "@lib/hooks";
 
 import "@demo/dialogs/chat/Chat.style.css";
+import { Style, StylePatchRequest, StylePatchRequestType } from "@lib/patches/style";
 
 const Element: DialogElement = () => {
-  const { removeDialog, addStyles, resetStyles } = useDialog();
+  const { receive, request } = useDialog();
+
+  receive(
+    AnimationTimingEvent.ANIMATION_START,
+    useCallback(() => {
+      console.log("chat animation started!");
+    }, [])
+  );
+
+  receive(
+    AnimationTimingEvent.ANIMATION_END,
+    useCallback(() => {
+      console.log("chat animation ended!");
+      request<StylePatchRequest>(Style.signature, {
+        type: StylePatchRequestType.ADD,
+        classNames: ["chat-wider"],
+      });
+    }, [request])
+  );
 
   return (
     <>
