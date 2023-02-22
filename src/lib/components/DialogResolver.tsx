@@ -1,11 +1,11 @@
 import { useCallback, useContext } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
-import { usePatcher, useDynamicStyles } from "@lib/hooks";
-import { StylePatchRequestType } from "@lib/hooks/internal/resolver/style/patch";
+import { usePatch, usePatcher } from "@lib/hooks";
 
 import DialogContext from "@lib/contexts/DialogContext";
 import DialogProviderContext from "@lib/contexts/DialogProviderContext";
+import StylePatch, { StylePatchRequestType } from "@lib/patches/StylePatch";
 
 /**
  * 특정 Dialog에서,
@@ -26,7 +26,7 @@ const DialogResolver = ({
   const patcher = usePatcher(reference);
 
   // 특정 Dialog의 Style을 동적으로 관리합니다.
-  const styles = useDynamicStyles(patcher);
+  const styles = usePatch(patcher, StylePatch);
 
   const addStyles = useCallback(
     (...classNames: Array<string>) => {
