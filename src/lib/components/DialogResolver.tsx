@@ -26,8 +26,8 @@ const DialogResolver = ({
 
   // Patch를 등록합니다.
   // Note: 추후 usePatch는 사라질 예정입니다.
-  usePatch(patcher, Style);
   usePatch(patcher, Animation);
+  usePatch(patcher, Style);
 
   // Dialog를 삭제합니다.
   const remove = useCallback(() => provider.removeDialog(reference), [provider, reference]);
@@ -42,15 +42,17 @@ const DialogResolver = ({
 
   // Patch에서 발생한 Event를 받아 콜백 함수를 실행합니다.
   // Note: Dialog Element의 Top-Level에서 호출해야 합니다.
-  const receive = useCallback(
+  const subscribe = useCallback(
     (event: string, callbackFn: () => void) => {
-      patcher.receive(event, callbackFn);
+      patcher.subscribe(event, callbackFn);
     },
     [patcher]
   );
 
   return (
-    <DialogContext.Provider value={{ remove, request, receive }}>{children}</DialogContext.Provider>
+    <DialogContext.Provider value={{ remove, request, subscribe }}>
+      {children}
+    </DialogContext.Provider>
   );
 };
 

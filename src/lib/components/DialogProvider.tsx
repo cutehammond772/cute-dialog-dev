@@ -12,23 +12,23 @@ import DialogProviderContext from "@lib/contexts/DialogProviderContext";
  */
 const DialogProvider = ({ children }: React.PropsWithChildren) => {
   const { createRef, removeRef, references } = useReferences();
-  
-  const elements = useElements();
-  const profiles = useProfiles();
+
+  const { registerElement, getElement } = useElements();
+  const { registerProfile, getProfile } = useProfiles();
 
   // Dialog의 Ref 객체를 저장합니다. 하위 컴포넌트에서 가져온 뒤 수정할 수 있습니다.
-  const handles = useHandles();
+  const { registerHandle, getHandle, hasHandle } = useHandles();
 
   const addDialog = useCallback(
     (dialog: DialogTemplate) => {
       const reference = createRef();
       const [profile, element] = dialog;
 
-      profiles.register(reference, profile);
-      elements.register(reference, element);
+      registerProfile(reference, profile);
+      registerElement(reference, element);
       return reference;
     },
-    [elements, profiles, createRef]
+    [createRef, registerElement, registerProfile]
   );
 
   const removeDialog = useCallback(
@@ -36,21 +36,16 @@ const DialogProvider = ({ children }: React.PropsWithChildren) => {
     [removeRef]
   );
 
-  const getHandle = useCallback(
-    (reference: DialogReferenceKey) => handles.get(reference),
-    [handles]
-  );
-
   // 렌더 시 Ref 객체를 가져와 handles에 등록합니다.
   const handleRef = useCallback(
     (reference: DialogReferenceKey, ref: HTMLDivElement | null) => {
       if (!ref) return null;
-      if (handles.has(reference)) return handles.get(reference);
+      if (hasHandle(reference)) return getHandle(reference);
 
-      handles.register(reference, ref);
+      registerHandle(reference, ref);
       return ref;
     },
-    [handles]
+    [getHandle, hasHandle, registerHandle]
   );
 
   return (
@@ -59,7 +54,7 @@ const DialogProvider = ({ children }: React.PropsWithChildren) => {
         addDialog,
         removeDialog,
         getHandle,
-        getProfile: profiles.get,
+        getProfile,
       }}
     >
       {children}
@@ -67,8 +62,8 @@ const DialogProvider = ({ children }: React.PropsWithChildren) => {
         {references
           .map((reference) => ({
             reference,
-            element: elements.get(reference),
-            profile: profiles.get(reference),
+            element: getElement(reference),
+            profile: getProfile(reference),
           }))
           .map(({ reference, element: DialogElement, profile }) => {
             // Dialog의 Element는, "div" 또는 "div"를 기반으로 하는 Element여야 합니다.

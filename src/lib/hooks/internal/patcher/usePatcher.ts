@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
-import { Patcher, PatchSignature } from "@lib/types/patch";
+import { Patcher } from "@lib/types/patch";
 
 import DialogProviderContext from "@lib/contexts/DialogProviderContext";
 
-import usePatchRegistrations from "./usePatchRegistrations";
+import usePatchNodes from "./usePatchNodes";
 import usePatchStores from "./usePatchStores";
 import usePatchRequests from "./usePatchRequests";
 import usePatchEvents from "./usePatchEvents";
@@ -14,19 +14,19 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
   const provider = useContext<IDialogProviderContext>(DialogProviderContext);
 
   // Patch를 등록 및 관리합니다.
-  const { nodes, register, ...patchRegistration } = usePatchRegistrations();
+  const { nodes, onPatchRegister, reservePatch } = usePatchNodes();
 
   // 각 Patch에서 사용되는 데이터를 담습니다.
-  const { stores, ...patchStore } = usePatchStores();
+  const { stores, applyStore } = usePatchStores();
 
   // Patch 요청을 관리합니다.
-  const { request, ...patchRequest } = usePatchRequests();
+  const { requestPatch, onPatchRequest } = usePatchRequests();
 
   // Patch Event를 관리합니다.
-  const { receive, ...patchEvent } = usePatchEvents();
+  const { subscribeEvent, publishEvent, memoCallback } = usePatchEvents();
 
   // 예약된 Patch를 등록 요청 시 같이 onInit()를 수행하여 Store를 초기화합니다.
-  patchRegistration.setCallback(
+  onPatchRegister(
     useCallback(
       (patches) => {
         const handle = provider.getHandle(reference);
@@ -35,31 +35,42 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
           throw new Error("Patch의 onInit() 과정에서 Dialog의 Handle을 가져오지 못했습니다.");
         }
 
-        const initedStores: Record<PatchSignature, any> = {};
-        patches.forEach(
-          ({ signature, patch }) =>
-            (initedStores[signature] = patch.onInit({
-              handle,
-              emit: patchEvent.emit,
-              callback: <T>(name: string, callback?: T) =>
-                patchEvent.callback(signature, name, callback),
-            }))
-        );
+        patches
+          .map(({ signature, onInit, events }) => {
+            /**
+             * useEffect Logic 중에서 Patch에 처음 접근하는 때인 onInit() 호출 시기에
+             * Event Mapping을 참조하여 각각의 Event를 Handle에 등록합니다.
+             * 이러한 과정이 필요한 이유는, 페이지가 로드되자마자 실행되는 이벤트에 대응하기 위함입니다.
+             */
+            if (events) {
+              Object.keys(events).forEach((event) =>
+                handle.addEventListener(
+                  event,
+                  memoCallback(signature, event, () => publishEvent(events[event]))
+                )
+              );
+            }
 
-        patchStore.applyAll(initedStores);
+            return {
+              signature,
+              store: onInit({
+                handle,
+                publish: publishEvent,
+              }),
+            };
+          })
+          .forEach(({ signature, store }) => applyStore(signature, store));
       },
-      [provider, reference, patchStore, patchEvent]
+      [provider, reference, applyStore, memoCallback, publishEvent]
     )
   );
 
   // Patch 요청을 받아 onRequest()를 수행합니다.
-  patchRequest.setCallback(
+  onPatchRequest(
     useCallback(
-      (patches) => {
-        const reducedStores: Record<PatchSignature, any> = {};
-
-        nodes.forEach(({ signature, patch }) => {
-          patches
+      (requests) => {
+        nodes.forEach(({ signature, onRequest }) => {
+          requests
             .filter((req) => req.signature === signature)
             .forEach(({ request }) => {
               const store = stores[signature];
@@ -68,25 +79,21 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
                 throw new Error("초기화되지 않은 Patch에 대해 onRequest() 호출을 시도했습니다.");
               }
 
-              const reducedStore = patch.onRequest({
+              const reducedStore = onRequest({
                 request,
                 store,
-                emit: patchEvent.emit,
-                callback: <T>(name: string, callback?: T) =>
-                  patchEvent.callback(signature, name, callback),
+                publish: publishEvent,
               });
 
               if (store === reducedStore) {
                 throw new Error("Patch 요청에 대해 Store 반환 시 새로운 객체로 반환되어야 합니다.");
               }
 
-              reducedStores[signature] = reducedStore;
+              applyStore(signature, reducedStore);
             });
         });
-
-        patchStore.applyAll(reducedStores);
       },
-      [nodes, stores, patchStore, patchEvent]
+      [nodes, stores, applyStore, publishEvent]
     )
   );
 
@@ -98,21 +105,34 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
       throw new Error("Patch의 onResolve() 과정에서 Dialog의 Handle을 가져오지 못했습니다.");
     }
 
-    nodes.forEach(({ signature, patch }) => {
+    nodes.forEach(({ signature, onResolve, events }) => {
       const store = stores[signature];
 
       if (!store) {
         throw new Error("초기화되지 않은 Patch에 대해 onResolve() 호출을 시도했습니다.");
       }
 
-      patch.onResolve({
+      if (events) {
+        Object.keys(events).forEach((event) => {
+          if (memoCallback(signature, event)) {
+            // onInit()에 등록된 Event Listener를 제거합니다.
+            handle.removeEventListener(event, memoCallback(signature, event));
+          }
+
+          handle.addEventListener(
+            event,
+            memoCallback(signature, event, () => publishEvent(events[event]))
+          );
+        });
+      }
+
+      onResolve({
         handle,
         store,
-        emit: patchEvent.emit,
-        callback: <T>(name: string, callback?: T) => patchEvent.callback(signature, name, callback),
+        publish: publishEvent,
       });
     });
-  }, [provider, reference, nodes, stores, patchEvent]);
+  }, [provider, reference, nodes, stores, memoCallback, publishEvent]);
 
   // Unmount 또는 Re-render 전에 onCleanUp()을 수행합니다.
   useEffect(
@@ -123,26 +143,30 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
         throw new Error("Patch의 onCleanUp() 과정에서 Dialog의 Handle을 가져오지 못했습니다.");
       }
 
-      nodes.forEach(({ signature, patch }) => {
+      nodes.forEach(({ signature, onCleanUp, events }) => {
         const store = stores[signature];
 
         if (!store) {
           throw new Error("초기화되지 않은 Patch에 대해 onCleanUp() 호출을 시도했습니다.");
         }
 
-        patch.onCleanUp({
+        if (events) {
+          Object.keys(events).forEach((event) =>
+            handle.removeEventListener(event, memoCallback(signature, event))
+          );
+        }
+
+        onCleanUp({
           handle,
           store,
-          emit: patchEvent.emit,
-          callback: <T>(name: string, callback?: T) =>
-            patchEvent.callback(signature, name, callback),
+          publish: publishEvent,
         });
       });
     },
-    [provider, reference, nodes, stores, patchEvent]
+    [provider, reference, nodes, stores, memoCallback, publishEvent]
   );
 
-  return { register, request, receive };
+  return { reserve: reservePatch, request: requestPatch, subscribe: subscribeEvent };
 };
 
 export default usePatcher;

@@ -7,16 +7,16 @@ import "@demo/dialogs/chat/Chat.style.css";
 import { Style, StylePatchRequest, StylePatchRequestType } from "@lib/patches/style";
 
 const Element: DialogElement = () => {
-  const { receive, request } = useDialog();
+  const { subscribe, request } = useDialog();
 
-  receive(
+  subscribe(
     AnimationTimingEvent.ANIMATION_START,
     useCallback(() => {
       console.log("chat animation started!");
     }, [])
   );
 
-  receive(
+  subscribe(
     AnimationTimingEvent.ANIMATION_END,
     useCallback(() => {
       console.log("chat animation ended!");

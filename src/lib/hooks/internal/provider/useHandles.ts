@@ -5,14 +5,14 @@ import { useCallback } from "react";
 // Dialog의 Ref 객체를 관리하는 Hook입니다.
 const useHandles = () => {
   // 실질적인 변경 대상인 Ref 객체를 저장합니다.
-  const handles = useReferenceContainer<HTMLDivElement>();
+  const { register, has, get } = useReferenceContainer<HTMLDivElement>();
 
-  const get = useCallback((reference: DialogReferenceKey) => {
+  const getHandle = useCallback((reference: DialogReferenceKey) => {
     // handle은 컴포넌트가 렌더링하는 과정에서 생성되므로 nullable을 허용합니다.
-    return handles.has(reference) ? handles.get(reference) : undefined;
-  }, [handles]);
+    return has(reference) ? get(reference) : undefined;
+  }, [get, has]);
 
-  return { register: handles.register, has: handles.has, get };
+  return { registerHandle: register, hasHandle: has, getHandle };
 };
 
 export default useHandles;

@@ -10,7 +10,7 @@ const useElements = () => {
 
   // 아직 부가 기능 구현 X
 
-  return { register, has, get };
+  return { registerElement: register, hasElement: has, getElement: get };
 };
 
 export default useElements;

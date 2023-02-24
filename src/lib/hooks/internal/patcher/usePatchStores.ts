@@ -6,15 +6,11 @@ const usePatchStores = () => {
 
   // clearStores는 먼저 모든 로직이 완성된 다음에 구현한다.
 
-  const apply = useCallback(<S extends object>(signature: PatchSignature, store: S) => {
+  const applyStore = useCallback(<S extends object>(signature: PatchSignature, store: S) => {
     setStores((stores) => ({ ...stores, [signature]: store }));
   }, []);
 
-  const applyAll = useCallback((stores: Record<PatchSignature, any>) => {
-    setStores((currentStores) => ({ ...currentStores, ...stores }));
-  }, []);
-
-  return { stores, apply, applyAll };
+  return { stores, applyStore };
 };
 
 export default usePatchStores;

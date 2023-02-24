@@ -7,7 +7,7 @@ const useDialogProfiles = () => {
 
   // 아직 부가 기능 구현 X
 
-  return { register, has, get };
+  return { registerProfile: register, hasProfile: has, getProfile: get };
 };
 
 export default useDialogProfiles;

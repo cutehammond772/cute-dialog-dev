@@ -32,5 +32,5 @@ export interface IDialogContext {
   request: <R extends object>(signature: PatchSignature, request: R) => void;
 
   // Patch에서 발생된 Event를 받아 콜백 함수를 호출합니다.
-  receive: (event: string, callbackFn: () => void) => void;
+  subscribe: (event: string, callbackFn: () => void) => void;
 }

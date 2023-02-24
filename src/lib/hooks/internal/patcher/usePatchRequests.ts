@@ -1,35 +1,30 @@
-import { PatcherRequestFn, PatchRequest, PatchRequestCallbackFn } from "@lib/types/patch";
+import { PatchRequest, PatchRequestCallback, PatchSignature } from "@lib/types/patch";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const usePatchRequests = () => {
-  const requests = useRef<Array<PatchRequest<any>>>([]);
+  const [requests, setRequests] = useState<Array<PatchRequest<any>>>([]);
 
-  // Patch 요청 시 카운트가 증가합니다. Re-render 요청을 위해 사용됩니다.
-  const [requestCount, setRequestCount] = useState<number>(0);
+  const callback = useRef<PatchRequestCallback>(() => {});
 
-  const callback = useRef<PatchRequestCallbackFn>();
+  const onPatchRequest = useCallback((callbackFn: PatchRequestCallback) => {
+    callback.current = callbackFn;
+  }, []);
 
-  const setCallback = useCallback(
-    (callbackFn: PatchRequestCallbackFn) => (callback.current = callbackFn),
-    []
-  );
-
-  // 요청을 수행할 때, 등록되지 않은 Patch로 요청 시 무시됩니다.
-  const request: PatcherRequestFn = useCallback((signature, request) => {
-    requests.current = requests.current.concat({ signature, request });
-    setRequestCount((count) => count + 1);
+  const requestPatch = useCallback(<R>(signature: PatchSignature, request: R) => {
+    setRequests((requests) => requests.concat(({ signature, request })));
   }, []);
 
   useEffect(() => {
-    if (requests.current.length === 0) return;
+    if (requests.length === 0) return;
+    
     // 요청에 대한 정보를 콜백 함수로 넘겨 처리합니다.
-    if (callback.current) callback.current(requests.current);
+    callback.current(requests);
 
-    // 요청 목록을 초기화합니다.
-    requests.current = [];
-  }, [requestCount]);
+    // 수행된 요청 목록만 삭제합니다.
+    setRequests((rqs) => rqs.slice(requests.length));
+  }, [requests]);
 
-  return { request, setCallback };
+  return { requestPatch, onPatchRequest };
 };
 
 export default usePatchRequests;
