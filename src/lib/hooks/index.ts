@@ -8,6 +8,11 @@ export { default as useReferenceContainer } from "@lib/hooks/internal/useReferen
 
 export { default as usePatch } from "@lib/hooks/internal/usePatch";
 
+// Patch와의 상호작용을 돕는 Hooks
+export { default as useStyle } from "@lib/hooks/patch/useStyle";
+
+export { default as useAnimation } from "@lib/hooks/patch/useAnimation";
+
 // DialogProvider에서 사용되는 Hooks
 export { default as useReferences } from "@lib/hooks/internal/provider/useReferences";
 

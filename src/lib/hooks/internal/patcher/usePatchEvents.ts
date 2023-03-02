@@ -7,10 +7,20 @@ const usePatchEvents = () => {
 
   const callbacks = useRef<Record<PatchSignature, Record<string, any>>>({});
 
+  /**
+   * 특정 Event를 받도록 합니다.
+   * 
+   * - 단, 컴포넌트 로직의 Top-Level에서 호출해야 합니다. (= Hook의 위치와 동등함)
+   * - 한 Event 당 하나의 콜백 함수만 매핑됩니다.
+   * - useCallback() Hook을 같이 사용하는 것을 권장합니다.
+   */
   const subscribeEvent = useCallback((event: string, callbackFn: () => void) => {
     receivers.current[event] = callbackFn;
   }, []);
 
+  /**
+   * Event를 발생시킵니다.
+   */
   const publishEvent = useCallback((event: string) => {
     setEvents((events) => events.concat(event));
   }, []);
