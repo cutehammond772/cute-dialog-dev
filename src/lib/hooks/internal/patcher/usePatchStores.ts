@@ -4,13 +4,40 @@ import { useCallback, useState } from "react";
 const usePatchStores = () => {
   const [stores, setStores] = useState<Record<PatchSignature, any>>({});
 
-  // clearStores는 먼저 모든 로직이 완성된 다음에 구현한다.
+  const getStore = useCallback(
+    <S extends object>(signature: PatchSignature): S => {
+      const store = stores[signature];
 
-  const applyStore = useCallback(<S extends object>(signature: PatchSignature, store: S) => {
-    setStores((stores) => ({ ...stores, [signature]: store }));
-  }, []);
+      if (!store) {
+        throw new Error(`[signature: ${signature}]에 대한 기존 store가 존재하지 않습니다.`);
+      }
 
-  return { stores, applyStore };
+      return store;
+    },
+    [stores]
+  );
+
+  /**
+   * Patch 내부에서 사용하는 Store의 값을 변경합니다.
+   */
+  const applyStore = useCallback(
+    <S extends object>(signature: PatchSignature, apply: ((store: S) => S) | S) => {
+      let store;
+      const reducedStore =
+        typeof apply === "object" ? apply : apply((store = getStore<S>(signature)));
+
+      if (store === reducedStore) {
+        throw new Error(
+          "applyToStore()에서 apply 전과 후의 store 객체는 다른 Reference를 가져야 합니다."
+        );
+      }
+
+      setStores((stores) => ({ ...stores, [signature]: reducedStore }));
+    },
+    [getStore]
+  );
+
+  return { getStore, applyStore };
 };
 
 export default usePatchStores;
