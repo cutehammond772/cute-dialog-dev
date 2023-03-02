@@ -54,7 +54,16 @@ export type PatchRequestCallback = (patches: Array<PatchRequest<any>>) => void;
 export type PatchRegisterCallback = (patches: Array<Patch<any, any>>) => void;
 
 export type Patcher = {
+  /**
+   * Patch 등록을 예약합니다. 다음 렌더링 타이밍에 Patch가 등록됩니다.
+   */
   reserve: <S extends object, R extends object>(patch: Patch<S, R>) => void;
+  /**
+   * 특정 Patch에 요청을 보냅니다.
+   */
   request: <R extends object>(signature: PatchSignature, request: R) => void;
+  /**
+   * Event를 받습니다.
+   */
   subscribe: (event: string, callbackFn: () => void) => void;
 };

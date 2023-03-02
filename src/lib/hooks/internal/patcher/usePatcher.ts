@@ -23,7 +23,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
   const { requestPatch, onPatchRequest } = usePatchRequests();
 
   // Patch Event를 관리합니다.
-  const { subscribeEvent, publishEvent, memoCallback } = usePatchEvents();
+  const { subscribeEvent, publishEvent, mapEvents, unmapEvents } = usePatchEvents();
 
   // 예약된 Patch를 등록 요청 시 같이 onInit()를 수행하여 Store를 초기화합니다.
   onPatchRegister(
@@ -41,14 +41,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
            * Event Mapping을 참조하여 각각의 Event를 Handle에 등록합니다.
            * 이러한 과정이 필요한 이유는, 페이지가 로드되자마자 실행되는 이벤트에 대응하기 위함입니다.
            */
-          if (events) {
-            Object.keys(events).forEach((event) =>
-              handle.addEventListener(
-                event,
-                memoCallback(signature, event, () => publishEvent(events[event]))
-              )
-            );
-          }
+          if (events) mapEvents(signature, events, handle);
 
           applyStore(
             signature,
@@ -59,7 +52,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
           );
         });
       },
-      [provider, reference, applyStore, memoCallback, publishEvent]
+      [provider, reference, applyStore, mapEvents, publishEvent]
     )
   );
 
@@ -95,20 +88,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
 
     nodes.forEach(({ signature, onResolve, events }) => {
       const store = getStore(signature);
-
-      if (events) {
-        Object.keys(events).forEach((event) => {
-          if (memoCallback(signature, event)) {
-            // onInit()에 등록된 Event Listener를 제거합니다.
-            handle.removeEventListener(event, memoCallback(signature, event));
-          }
-
-          handle.addEventListener(
-            event,
-            memoCallback(signature, event, () => publishEvent(events[event]))
-          );
-        });
-      }
+      if (events) mapEvents(signature, events, handle);
 
       onResolve({
         handle,
@@ -116,7 +96,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
         publish: publishEvent,
       });
     });
-  }, [provider, reference, nodes, getStore, memoCallback, publishEvent]);
+  }, [provider, reference, nodes, getStore, mapEvents, publishEvent]);
 
   // Unmount 또는 Re-render 전에 onCleanUp()을 수행합니다.
   useEffect(
@@ -129,16 +109,7 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
 
       nodes.forEach(({ signature, onCleanUp, events }) => {
         const store = getStore(signature);
-
-        if (!store) {
-          throw new Error("초기화되지 않은 Patch에 대해 onCleanUp() 호출을 시도했습니다.");
-        }
-
-        if (events) {
-          Object.keys(events).forEach((event) =>
-            handle.removeEventListener(event, memoCallback(signature, event))
-          );
-        }
+        if (events) unmapEvents(signature, events, handle);
 
         onCleanUp({
           handle,
@@ -147,10 +118,14 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
         });
       });
     },
-    [provider, reference, nodes, getStore, memoCallback, publishEvent]
+    [provider, reference, nodes, getStore, unmapEvents, publishEvent]
   );
 
-  return { reserve: reservePatch, request: requestPatch, subscribe: subscribeEvent };
+  return {
+    reserve: reservePatch,
+    request: requestPatch,
+    subscribe: subscribeEvent,
+  };
 };
 
 export default usePatcher;
