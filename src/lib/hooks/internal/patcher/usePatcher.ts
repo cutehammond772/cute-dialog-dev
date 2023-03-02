@@ -31,10 +31,6 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
       (patches) => {
         const handle = provider.getHandle(reference);
 
-        if (!handle) {
-          throw new Error("Patch의 onInit() 과정에서 Dialog의 Handle을 가져오지 못했습니다.");
-        }
-
         patches.forEach(({ signature, onInit, events }) => {
           /**
            * useEffect Logic 중에서 Patch에 처음 접근하는 때인 onInit() 호출 시기에
@@ -82,10 +78,6 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
   useEffect(() => {
     const handle = provider.getHandle(reference);
 
-    if (!handle) {
-      throw new Error("Patch의 onResolve() 과정에서 Dialog의 Handle을 가져오지 못했습니다.");
-    }
-
     nodes.forEach(({ signature, onResolve, events }) => {
       const store = getStore(signature);
       if (events) mapEvents(signature, events, handle);
@@ -102,10 +94,6 @@ const usePatcher = (reference: DialogReferenceKey): Patcher => {
   useEffect(
     () => () => {
       const handle = provider.getHandle(reference);
-
-      if (!handle) {
-        throw new Error("Patch의 onCleanUp() 과정에서 Dialog의 Handle을 가져오지 못했습니다.");
-      }
 
       nodes.forEach(({ signature, onCleanUp, events }) => {
         const store = getStore(signature);

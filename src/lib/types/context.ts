@@ -12,7 +12,7 @@ interface DialogContainerFeatures {
 }
 
 interface DialogHandleFeatures {
-  getHandle: DialogReferenceFunction<HTMLDivElement | undefined>;
+  getHandle: DialogReferenceFunction<HTMLDivElement>;
 }
 
 interface DialogProfileFeatures {
