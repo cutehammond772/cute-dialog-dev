@@ -1,25 +1,16 @@
 import { useCallback } from "react";
 import { DialogElement, DialogTemplate } from "@lib/types/essential";
-import { useAnimation, useStyle } from "@lib/hooks";
+import { useAnimation, usePointer, useStyle } from "@lib/hooks";
 
 import "@demo/dialogs/chat/Chat.style.css";
 
 const Element: DialogElement = () => {
-  const { onAnimationStart, onAnimationEnd } = useAnimation();
-  const { addStyles } = useStyle();
+  const { addStyles, removeStyles } = useStyle();
+  const { onAnimationEnd } = useAnimation();
+  const { onClick } = usePointer();
 
-  onAnimationStart(
-    useCallback(() => {
-      console.log("[ chat animation started ]");
-    }, [])
-  );
-
-  onAnimationEnd(
-    useCallback(() => {
-      console.log("[ chat animation ended ]");
-      addStyles("chat-wider");
-    }, [addStyles])
-  );
+  onClick(useCallback(() => removeStyles("chat-wider"), [removeStyles]));
+  onAnimationEnd(useCallback(() => addStyles("chat-wider"), [addStyles]));
 
   return (
     <>

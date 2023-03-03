@@ -1,10 +1,17 @@
 export type PatchSignature = string;
+export type PatchEventSignature = string;
+
+export interface PatchEvent<T> {
+  eventName: PatchEventSignature;
+  payload: T;
+}
 
 export type PatchEventProps = {
   // Event를 발생시킵니다.
   // Note: onCleanUp()에서 Unmount 시 Event는 receive되지 않습니다.
-  publish: (event: string) => void;
+  publish: <T>(event: PatchEvent<T>) => void;
 };
+
 export type PatchHandleProps = {
   handle: HTMLDivElement;
 };
@@ -29,7 +36,7 @@ export interface Patch<S extends object, R extends object> {
   /**
    * Element Event를 Patch Event로 publish할 때 이에 대한 매핑을 설정합니다.
    */
-  events?: PatchEventMappings;
+  events?: HandleEventMappings;
 
   // Patch 초기화 시 Patch Context에서 사용하는 Store를 초기화합니다.
   onInit: (props: InitProps) => S;
@@ -41,8 +48,8 @@ export interface Patch<S extends object, R extends object> {
   onCleanUp: (props: CleanUpProps<S>) => void;
 }
 
-export interface PatchEventMappings {
-  [event: string]: string;
+export interface HandleEventMappings {
+  [handleEvent: string]: PatchEventSignature;
 }
 
 export interface PatchRequest<R extends object> {
@@ -50,6 +57,7 @@ export interface PatchRequest<R extends object> {
   request: R;
 }
 
+export type PatchEventCallback = <T>(data: { payload: T }) => void;
 export type PatchRequestCallback = (patches: Array<PatchRequest<any>>) => void;
 export type PatchRegisterCallback = (patches: Array<Patch<any, any>>) => void;
 
@@ -65,5 +73,5 @@ export type Patcher = {
   /**
    * Event를 받습니다.
    */
-  subscribe: (event: string, callbackFn: () => void) => void;
+  subscribe: (event: PatchEventSignature, callbackFn: PatchEventCallback) => void;
 };

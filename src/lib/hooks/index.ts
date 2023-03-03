@@ -13,6 +13,8 @@ export { default as useStyle } from "@lib/hooks/patch/useStyle";
 
 export { default as useAnimation } from "@lib/hooks/patch/useAnimation";
 
+export { default as usePointer } from "@lib/hooks/patch/usePointer";
+
 // DialogProvider에서 사용되는 Hooks
 export { default as useReferences } from "@lib/hooks/internal/provider/useReferences";
 

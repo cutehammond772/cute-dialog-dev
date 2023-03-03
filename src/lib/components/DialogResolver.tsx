@@ -1,13 +1,14 @@
 import { useCallback, useContext } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
-import { PatchSignature } from "@lib/types/patch";
+import { PatchEventCallback, PatchEventSignature, PatchSignature } from "@lib/types/patch";
 import { usePatch, usePatcher } from "@lib/hooks";
 
 import DialogContext from "@lib/contexts/DialogContext";
 import DialogProviderContext from "@lib/contexts/DialogProviderContext";
 import { Style } from "@lib/patches/style";
 import { Animation } from "@lib/patches/animation";
+import { Pointer } from "@lib/patches/pointer";
 
 /**
  * 특정 Dialog에서,
@@ -28,6 +29,7 @@ const DialogResolver = ({
   // Note: 추후 usePatch는 사라질 예정입니다.
   usePatch(patcher, Animation);
   usePatch(patcher, Style);
+  usePatch(patcher, Pointer);
 
   // Dialog를 삭제합니다.
   const remove = useCallback(() => provider.removeDialog(reference), [provider, reference]);
@@ -43,7 +45,7 @@ const DialogResolver = ({
   // Patch에서 발생한 Event를 받아 콜백 함수를 실행합니다.
   // Note: Dialog Element의 Top-Level에서 호출해야 합니다.
   const subscribe = useCallback(
-    (event: string, callbackFn: () => void) => {
+    (event: PatchEventSignature, callbackFn: PatchEventCallback) => {
       patcher.subscribe(event, callbackFn);
     },
     [patcher]
