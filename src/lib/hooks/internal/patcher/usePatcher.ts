@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
-import { Patcher } from "@lib/types/patch";
+import { Patcher } from "@lib/types/patch/patcher";
 
 import DialogProviderContext from "@lib/contexts/DialogProviderContext";
 

@@ -1,4 +1,4 @@
-import { Patch } from "@lib/types/patch";
+import { Patch } from "@lib/types/patch/patcher";
 
 export const StylePatchRequestType = {
   ADD: "ADD",

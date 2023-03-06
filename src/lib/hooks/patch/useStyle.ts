@@ -7,24 +7,33 @@ const useStyle = () => {
 
   const addStyles = useCallback(
     (...classNames: Array<string>) =>
-      request<StylePatchRequest>(Style.signature, { type: StylePatchRequestType.ADD, classNames }),
+      request<StylePatchRequest>({
+        signature: Style.signature,
+        request: { type: StylePatchRequestType.ADD, classNames },
+      }),
     [request]
   );
 
   const removeStyles = useCallback(
     (...classNames: Array<string>) =>
-      request<StylePatchRequest>(Style.signature, {
-        type: StylePatchRequestType.REMOVE,
-        classNames,
+      request<StylePatchRequest>({
+        signature: Style.signature,
+        request: {
+          type: StylePatchRequestType.REMOVE,
+          classNames,
+        },
       }),
     [request]
   );
 
   const resetStyles = useCallback(
     () =>
-      request<StylePatchRequest>(Style.signature, {
-        type: StylePatchRequestType.RESET,
-        classNames: [],
+      request<StylePatchRequest>({
+        signature: Style.signature,
+        request: {
+          type: StylePatchRequestType.RESET,
+          classNames: [],
+        },
       }),
     [request]
   );

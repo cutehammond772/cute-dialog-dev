@@ -1,4 +1,4 @@
-import { Patch, Patcher } from "@lib/types/patch";
+import { Patch, Patcher } from "@lib/types/patch/patcher";
 import { useRef } from "react";
 
 const usePatch = <R extends object>(patcher: Patcher, patch: Patch<any, R>) => {

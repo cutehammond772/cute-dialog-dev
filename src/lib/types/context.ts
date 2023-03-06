@@ -4,8 +4,7 @@ import {
   DialogReferenceKey,
   DialogTemplate,
 } from "@lib/types/essential";
-
-import { PatchEventCallback, PatchEventSignature, PatchSignature } from "@lib/types/patch";
+import { PatchRequest, PatchSubscribe } from "@lib/types/patch/patcher";
 
 interface DialogContainerFeatures {
   addDialog: (dialog: DialogTemplate) => DialogReferenceKey;
@@ -30,8 +29,8 @@ export interface IDialogContext {
   remove: () => void;
 
   // 등록된 Patch에 요청을 보냅니다. 등록되지 않은 Patch인 경우 요청은 무시됩니다.
-  request: <R extends object>(signature: PatchSignature, request: R) => void;
+  request: <R extends object>(request: PatchRequest<R>) => void;
 
   // Patch에서 발생된 Event를 받아 콜백 함수를 호출합니다.
-  subscribe: <T>(event: PatchEventSignature, callbackFn: PatchEventCallback<T>) => void;
+  subscribe: <T>(subscribe: PatchSubscribe<T>) => void;
 }

@@ -1,5 +1,5 @@
-import { PatchRequest, PatchRequestCallback, PatchSignature } from "@lib/types/patch";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PatchRequest, PatchRequestCallback } from "@lib/types/patch/patcher";
 
 const usePatchRequests = () => {
   const [requests, setRequests] = useState<Array<PatchRequest<any>>>([]);
@@ -10,7 +10,7 @@ const usePatchRequests = () => {
     callback.current = callbackFn;
   }, []);
 
-  const requestPatch = useCallback(<R>(signature: PatchSignature, request: R) => {
+  const requestPatch = useCallback(<R extends object>({ signature, request }: PatchRequest<R>) => {
     setRequests((requests) => requests.concat(({ signature, request })));
   }, []);
 

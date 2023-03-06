@@ -1,11 +1,7 @@
-import {
-  HandleEventMappings,
-  PatchEvent,
-  PatchEventCallback,
-  PatchEventSignature,
-  PatchSignature,
-} from "@lib/types/patch";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PatchEventSignature, PatchSignature } from "@lib/types/patch/essential";
+import { HandleEventMappings, PatchEvent, PatchEventCallback } from "@lib/types/patch/event";
+import { PatchSubscribe } from "@lib/types/patch/patcher";
 
 const usePatchEvents = () => {
   const subscribers = useRef<Record<PatchEventSignature, PatchEventCallback<any>>>({});
@@ -20,12 +16,9 @@ const usePatchEvents = () => {
    * - 한 Event 당 하나의 콜백 함수만 매핑됩니다.
    * - useCallback() Hook을 같이 사용하는 것을 권장합니다.
    */
-  const subscribeEvent = useCallback(
-    <T>(event: PatchEventSignature, callbackFn: PatchEventCallback<T>) => {
-      subscribers.current[event] = callbackFn;
-    },
-    []
-  );
+  const subscribeEvent = useCallback(<T>({ event, callback }: PatchSubscribe<T>) => {
+    subscribers.current[event] = callback;
+  }, []);
 
   /**
    * Event를 발생시킵니다.

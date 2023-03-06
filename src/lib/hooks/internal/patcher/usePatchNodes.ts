@@ -1,4 +1,5 @@
-import { Patch, PatchRegisterCallback, PatchSignature } from "@lib/types/patch";
+import { PatchSignature } from "@lib/types/patch/essential";
+import { Patch, PatchRegisterCallback } from "@lib/types/patch/patcher";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const usePatchNodes = () => {

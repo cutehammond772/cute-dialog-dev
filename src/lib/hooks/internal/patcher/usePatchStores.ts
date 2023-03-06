@@ -1,4 +1,4 @@
-import { PatchSignature } from "@lib/types/patch";
+import { PatchSignature } from "@lib/types/patch/essential";
 import { useCallback, useState } from "react";
 
 const usePatchStores = () => {
