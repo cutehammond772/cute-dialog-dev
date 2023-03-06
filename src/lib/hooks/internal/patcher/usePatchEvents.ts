@@ -8,7 +8,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const usePatchEvents = () => {
-  const subscribers = useRef<Record<PatchEventSignature, PatchEventCallback>>({});
+  const subscribers = useRef<Record<PatchEventSignature, PatchEventCallback<any>>>({});
   const [events, setEvents] = useState<Array<PatchEvent<any>>>([]);
 
   const handleCallbacks = useRef<Record<PatchSignature, Record<PatchEventSignature, any>>>({});
@@ -21,7 +21,7 @@ const usePatchEvents = () => {
    * - useCallback() Hook을 같이 사용하는 것을 권장합니다.
    */
   const subscribeEvent = useCallback(
-    (event: PatchEventSignature, callbackFn: PatchEventCallback) => {
+    <T>(event: PatchEventSignature, callbackFn: PatchEventCallback<T>) => {
       subscribers.current[event] = callbackFn;
     },
     []
@@ -35,12 +35,12 @@ const usePatchEvents = () => {
   }, []);
 
   // Hook 내부에서만 사용하는 함수로, callback 매개변수의 여부에 따라 콜백 함수를 "저장 후 반환" / "가져온 후 제거" 합니다.
-  const memoizePublisher = useCallback(
-    <T extends EventListenerOrEventListenerObject>(
+  const memoizeCallback = useCallback(
+    <T extends Event>(
       signature: PatchSignature,
       name: string,
-      callback?: T
-    ): T | undefined => {
+      callback?: (event: T) => void
+    ): ((event: T) => void) | undefined => {
       if (!callback) {
         if (!handleCallbacks.current[signature] || !handleCallbacks.current[signature][name]) {
           // 저장된 콜백 함수가 존재하지 않는 경우 undefined를 반환합니다.
@@ -73,31 +73,33 @@ const usePatchEvents = () => {
   const unmapEvents = useCallback(
     (signature: PatchSignature, mappings: HandleEventMappings, handle: HTMLDivElement) =>
       Object.keys(mappings).forEach((event) => {
-        const callback = memoizePublisher(signature, event);
+        const callback = memoizeCallback(signature, event);
         if (callback) handle.removeEventListener(event, callback);
       }),
-    [memoizePublisher]
+    [memoizeCallback]
   );
 
   /**
    * Handle Event와의 매핑을 설정합니다.
    * 예를 들어, "onclick" Event가 발생할 시 이에 매핑되는 Patch Event가 발생되도록 합니다.
+   *
+   * Note: React에서 매핑된 Event가 아닌 DOM Event를 직접 가져옵니다.
    */
   const mapEvents = useCallback(
     (signature: PatchSignature, mappings: HandleEventMappings, handle: HTMLDivElement) => {
       Object.keys(mappings).forEach((handleEvent) => {
-        const callback = memoizePublisher(signature, handleEvent);
+        const callback = memoizeCallback(signature, handleEvent);
         if (callback) handle.removeEventListener(handleEvent, callback);
 
         handle.addEventListener(
           handleEvent,
-          memoizePublisher(signature, handleEvent, (eventObj) =>
+          memoizeCallback(signature, handleEvent, (eventObj) =>
             publishEvent({ eventName: mappings[handleEvent], payload: eventObj })
           )!
         );
       });
     },
-    [memoizePublisher, publishEvent]
+    [memoizeCallback, publishEvent]
   );
 
   useEffect(() => {

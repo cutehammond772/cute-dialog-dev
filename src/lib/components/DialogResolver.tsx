@@ -1,11 +1,11 @@
 import { useCallback, useContext } from "react";
 import { IDialogProviderContext } from "@lib/types/context";
 import { DialogReferenceKey } from "@lib/types/essential";
-import { PatchEventCallback, PatchEventSignature, PatchSignature } from "@lib/types/patch";
 import { usePatch, usePatcher } from "@lib/hooks";
 
 import DialogContext from "@lib/contexts/DialogContext";
 import DialogProviderContext from "@lib/contexts/DialogProviderContext";
+
 import { Style } from "@lib/patches/style";
 import { Animation } from "@lib/patches/animation";
 import { Pointer } from "@lib/patches/pointer";
@@ -34,25 +34,10 @@ const DialogResolver = ({
   // Dialog를 삭제합니다.
   const remove = useCallback(() => provider.removeDialog(reference), [provider, reference]);
 
-  // Patch 요청을 보냅니다.
-  const request = useCallback(
-    <R extends object>(signature: PatchSignature, request: R) => {
-      patcher.request(signature, request);
-    },
-    [patcher]
-  );
-
-  // Patch에서 발생한 Event를 받아 콜백 함수를 실행합니다.
-  // Note: Dialog Element의 Top-Level에서 호출해야 합니다.
-  const subscribe = useCallback(
-    (event: PatchEventSignature, callbackFn: PatchEventCallback) => {
-      patcher.subscribe(event, callbackFn);
-    },
-    [patcher]
-  );
-
   return (
-    <DialogContext.Provider value={{ remove, request, subscribe }}>
+    <DialogContext.Provider
+      value={{ remove, request: patcher.request, subscribe: patcher.subscribe }}
+    >
       {children}
     </DialogContext.Provider>
   );

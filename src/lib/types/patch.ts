@@ -52,12 +52,16 @@ export interface HandleEventMappings {
   [handleEvent: string]: PatchEventSignature;
 }
 
+export type HandleEventHandler<T extends Event | undefined = undefined> = T extends Event
+  ? (callback: PatchEventCallback<T>) => void
+  : (callback: () => void) => void;
+
 export interface PatchRequest<R extends object> {
   signature: PatchSignature;
   request: R;
 }
 
-export type PatchEventCallback = <T>(data: { payload: T }) => void;
+export type PatchEventCallback<T> = (data: { payload: T }) => void;
 export type PatchRequestCallback = (patches: Array<PatchRequest<any>>) => void;
 export type PatchRegisterCallback = (patches: Array<Patch<any, any>>) => void;
 
@@ -73,5 +77,5 @@ export type Patcher = {
   /**
    * Event를 받습니다.
    */
-  subscribe: (event: PatchEventSignature, callbackFn: PatchEventCallback) => void;
+  subscribe: <T>(event: PatchEventSignature, callbackFn: PatchEventCallback<T>) => void;
 };
