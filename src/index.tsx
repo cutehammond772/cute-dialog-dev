@@ -1,9 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import { DialogProvider } from "@cute-dialog/core";
 
-import "./global.css";
+import App from "./components/App";
+import { area } from "./global";
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-
-root.render(<App />);
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <DialogProvider className={area}>
+    <App />
+  </DialogProvider>
+);
