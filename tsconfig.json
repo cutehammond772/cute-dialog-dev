@@ -15,15 +15,20 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "paths": {
-      "@/*": ["./lib/types/*"],
-      "@provider/*": ["./lib/provider/*"],
-      "@resolver/*": ["./lib/resolver/*"],
-      "@patcher/*": ["./lib/patcher/*"],
-      "@utils/*": ["./lib/utils/*"],
+      "@cute-dialog/core": ["./lib/core"],
+      "@core/*": ["./lib/core/types/*"],
+      "@core/provider/*": ["./lib/core/provider/*"],
+      "@core/resolver/*": ["./lib/core/resolver/*"],
+      "@core/patcher/*": ["./lib/core/patcher/*"],
+      "@core/utils/*": ["./lib/core/utils/*"],
 
-      "@cute-dialog/core": ["./lib"],
-      "$/*": ["./src/components/*"],
-      "$/info": ["./src/info"]
+      "@cute-dialog/effect": ["./lib/effect"],
+      "@effect/*": ["./lib/effect/*"],
+
+      "@cute-dialog/modal": ["./lib/modal"],
+      "@modal/*": ["./lib/modal/*"],
+
+      "@dev/*": ["./src/*"]
     }
   },
   "include": ["src", "lib"],
