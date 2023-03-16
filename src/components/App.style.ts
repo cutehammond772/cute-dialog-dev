@@ -2,6 +2,7 @@ import { styled } from "@linaria/react";
 
 export const App = styled.div`
   position: relative;
+  min-width: 576px;
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr minmax(5rem, auto);

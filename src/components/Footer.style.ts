@@ -37,4 +37,14 @@ export const Item = styled.div`
     font-size: 1.25rem;
     color: white;
   }
+
+  @media screen and (max-width: 768px) {
+    & .title {
+      font-size: 0.75rem;
+    }
+
+    & .content {
+      font-size: 1rem;
+    }
+  }
 `;

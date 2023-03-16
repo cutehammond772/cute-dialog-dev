@@ -5,6 +5,10 @@ export const Introduction = styled(Article)`
   display: grid;
   grid-template-rows: 1fr 3rem;
   row-gap: 3rem;
+
+  @media screen and (max-width: 768px) {
+    grid-template-rows: 1fr 2.5rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -13,6 +17,7 @@ export const Content = styled.div`
 `;
 
 export const UpdateLog = styled.button`
+  appearance: none;
   border: none;
   border-radius: 1rem;
   cursor: pointer;
@@ -21,4 +26,8 @@ export const UpdateLog = styled.button`
   line-height: 100%;
   text-align: left;
   background-color: lightgreen;
+
+  @media screen and (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;

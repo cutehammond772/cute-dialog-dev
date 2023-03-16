@@ -2,7 +2,7 @@ import { css } from "@linaria/core";
 
 export const area = css`
   @import "https://fonts.googleapis.com/css2?family=Inter&display=swap";
-  @import "http://fonts.googleapis.com/earlyaccess/notosanskr.css";
+  @import "https://fonts.googleapis.com/earlyaccess/notosanskr.css";
 
   position: fixed;
   top: 0;

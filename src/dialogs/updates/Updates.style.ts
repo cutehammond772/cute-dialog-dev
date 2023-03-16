@@ -31,6 +31,10 @@ export const Area = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @media screen and (max-width: 768px) {
+    row-gap: 2.5rem;
+  }
 `;
 
 export const Header = styled.div`
@@ -66,9 +70,14 @@ export const Title = styled.div`
   font-size: 2rem;
   font-weight: bold;
   text-transform: uppercase;
+
+  @media screen and (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 export const Close = styled.button`
+  appearance: none;
   font: inherit;
   font-size: 1rem;
   border: none;

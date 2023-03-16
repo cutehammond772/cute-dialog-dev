@@ -16,12 +16,20 @@ export const Log = styled.div`
       opacity: 1;
     }
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 export const Version = styled.div`
   font-size: 2rem;
   font-weight: bold;
   user-select: none;
+
+  @media screen and (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 export const Content = styled.div`
@@ -31,5 +39,9 @@ export const Content = styled.div`
 
   & * {
     word-break: keep-all;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 0.5rem;
   }
 `;
