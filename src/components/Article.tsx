@@ -1,14 +1,15 @@
-import { memo } from "react";
-import * as S from "$/Article.style";
+import React, { memo } from "react";
+import * as S from "@dev/components/Article.style";
 
-interface ArticleProps {
+export interface ArticleProps {
   title: string;
+  className?: string;
 }
 
-const Article = memo(({ title, children }: React.PropsWithChildren<ArticleProps>) => (
+const Article = memo(({ title, className, children }: React.PropsWithChildren<ArticleProps>) => (
   <S.Article id={title.toLowerCase()}>
     <S.Title>{title}</S.Title>
-    <S.Section>{children}</S.Section>
+    <S.Section className={className}>{children}</S.Section>
   </S.Article>
 ));
 

@@ -1,20 +1,19 @@
-import { memo } from "react";
+import React, { memo } from "react";
+import * as I from "@dev/info";
+import * as S from "@dev/components/App.style";
 
-import * as S from "$/App.style";
+import Header from "@dev/components/Header";
+import Footer from "@dev/components/Footer";
 
-import Header from "$/Header";
-import Footer from "$/Footer";
-
-import * as I from "$/info";
-import Introduction from "./articles/Introduction";
+import Introduction from "@dev/components/articles/Introduction";
 
 const App = memo(() => (
   <S.App>
-    <Header version={I.VERSION} items={I.ARTICLES} />
+    <Header items={I.ARTICLES} />
     <S.Main>
       <Introduction />
     </S.Main>
-    <Footer version={I.VERSION} />
+    <Footer />
   </S.App>
 ));
 

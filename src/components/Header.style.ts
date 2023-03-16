@@ -1,25 +1,26 @@
 import { styled } from "@linaria/react";
 
 export const Header = styled.header`
-  grid-area: 1 / 1 / 2 / 4;
-  display: grid;
-  grid-template-columns: inherit;
-`;
-
-export const Content = styled.div`
   grid-area: 1 / 2 / 2 / 3;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  align-items: center;
+
+  /* MOBILE */
+  @media screen and (max-width: 768px) {
+    flex-flow: column nowrap;
+    justify-content: center;
+  }
 `;
 
 export const Title = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-start;
   align-items: center;
   column-gap: 1rem;
   line-height: 100%;
+  min-height: 5rem;
   white-space: nowrap;
   user-select: none;
 
@@ -37,14 +38,12 @@ export const Title = styled.div`
   }
 `;
 
-export const Menu = styled.ul`
+export const Menu = styled.div`
   display: flex;
   flex-flow: row nowrap;
   column-gap: 1rem;
-  justify-content: flex-end;
   align-items: center;
   line-height: 100%;
-  list-style-type: none;
 
   & a {
     text-decoration: none;
